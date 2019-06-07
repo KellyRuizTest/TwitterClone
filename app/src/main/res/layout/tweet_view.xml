@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/contact_card_view"
+    android:layout_gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="9dp"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardElevation="3dp"
+    android:padding="16dp"
+    app:cardUseCompatPadding="true"
+    android:foreground="?attr/selectableItemBackground">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp">
+
+        <!--<ImageView
+            android:id="@+id/avatar_image"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:contentDescription="User avatar"
+            android:scaleType="centerCrop"
+            tools:src="@drawable/profile"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginLeft="3dp"
+            android:layout_marginStart="3dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            tools:ignore="HardcodedText"/>-->
+
+        <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/avatar_image"
+            android:layout_width="43dp"
+            android:layout_height="44dp"
+            android:foregroundGravity="center"
+            android:paddingStart="2dp"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:src="@drawable/profile"
+            app:civ_border_color="@color/colorPrimaryDark"
+            app:civ_border_width="1dp" />
+
+
+        <TextView
+            android:id="@+id/name_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toRightOf="@+id/avatar_image"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="John Doe" />
+
+        <TextView
+            android:id="@+id/iduser_tweet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
+            android:textColor="@android:color/darker_gray"
+            app:layout_constraintLeft_toRightOf="@+id/name_user"
+            app:layout_constraintTop_toTopOf="parent"
+
+            tools:text=":user" />
+
+        <TextView
+            android:id="@+id/text_tweet"
+            android:layout_width="295dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:layout_marginTop="8dp"
+            android:text="Cualquier Cosa 1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="@color/common_google_signin_btn_text_dark_focused"
+            app:layout_constraintLeft_toRightOf="@+id/avatar_image"
+            app:layout_constraintTop_toBottomOf="@+id/iduser_tweet" />
+
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.v7.widget.CardView>

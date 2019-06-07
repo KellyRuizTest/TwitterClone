@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "482591675520",
+    "firebase_url": "https://twitterclonelite.firebaseio.com",
+    "project_id": "twitterclonelite",
+    "storage_bucket": "twitterclonelite.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:482591675520:android:c2d40cece836c571",
+        "android_client_info": {
+          "package_name": "com.example.krruiz.twitterclonelite"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "482591675520-c33jd31nqpja8ek3rpqtjs1k1jtjbrgm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.krruiz.twitterclonelite",
+            "certificate_hash": "a46db4cac5a04a1069683a556ed012d50d7e8c39"
+          }
+        },
+        {
+          "client_id": "482591675520-8ck8j2r06r57l3cgt3obd5nk3bnlq6vd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAC6vkwqcUIuvSH0t9QofcnwozQpimka20"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "482591675520-8ck8j2r06r57l3cgt3obd5nk3bnlq6vd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
