@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "482591675520-8vcs327emrra8iv1o1evhm5pmcsm3ror.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.krruiz.twitterclonelite",
+            "certificate_hash": "b0c2bc8d95e286cfa4cbc04eab09bd136c3f9a32"
+          }
+        },
+        {
+          "client_id": "482591675520-4rfocboiekq6sl1v164382glbageq02e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.krruiz.twitterclonelite",
+            "certificate_hash": "df566d7afad190108fd99ff5fcf076e22e88491f"
+          }
+        },
+        {
           "client_id": "482591675520-c33jd31nqpja8ek3rpqtjs1k1jtjbrgm.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -33,20 +49,13 @@
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 2,
           "other_platform_oauth_client": [
             {
               "client_id": "482591675520-8ck8j2r06r57l3cgt3obd5nk3bnlq6vd.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
-        },
-        "ads_service": {
-          "status": 2
         }
       }
     }

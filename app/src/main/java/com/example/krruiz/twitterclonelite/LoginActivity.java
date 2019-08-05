@@ -2,8 +2,8 @@ package com.example.krruiz.twitterclonelite;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -61,7 +61,7 @@ public class LoginActivity extends AppCompatActivity {
             loadingBar.setMessage("Please wait");
             loadingBar.setCanceledOnTouchOutside(false);
             loadingBar.show();
-            AllowAccessToAccount(id, passwordID);
+            AllowAccessToAccount(id, passwordID); // it can be a DaO+Room+LiveData+AndroidViewModel
         }
     }
 
@@ -94,6 +94,7 @@ public class LoginActivity extends AppCompatActivity {
                             Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                             Prevalent.currentUser = userData;
                             startActivity(intent);
+                            finish();
 
                         } else {
                             loadingBar.dismiss();

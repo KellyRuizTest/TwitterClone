@@ -14,8 +14,11 @@ public class Users {
     public String bio;
     public String location;
     public String sitioweb;
-    //public List <Users> followers;
-    //public List <Users> followings;
+
+    public List <Users> followers;
+    public List <Users> followings;
+
+    public List<Tweet> tweets;
 
     public Users(){
 

@@ -1,20 +1,25 @@
 package com.example.krruiz.twitterclonelite;
 
+import android.app.SearchManager;
 import android.content.Intent;
-import android.content.SyncStatusObserver;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import androidx.appcompat.widget.SearchView;
+import androidx.core.view.MenuItemCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
+import android.view.MenuInflater;
 import android.view.View;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import com.google.android.material.navigation.NavigationView;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -35,6 +40,8 @@ import java.util.List;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    public static final String QUERY_FIREBASE = "QUERY_FIREBASE";
 
     private RecyclerView recyclerView;
     private TweetAdapter tweetAdapter;
@@ -151,7 +158,7 @@ public class HomeActivity extends AppCompatActivity
 
         if (id == R.id.nav_camera){
 
-            Toast.makeText(HomeActivity.this, "You clicked profile", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(HomeActivity.this, "You clicked profile", Toast.LENGTH_SHORT).show();
             Intent intent1 = new Intent(HomeActivity.this, ProfileActivity.class);
             startActivity(intent1);
 
@@ -187,4 +194,49 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_scrolling, menu);
+
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
+
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setSubmitButtonEnabled(true);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //searchContact(query);
+
+                Log.d("RESULT_OK", "Entre a SearchView");
+                Intent ShowingContact = new Intent(HomeActivity.this, ShowingContacts.class);
+                ShowingContact.putExtra(QUERY_FIREBASE, query);
+                startActivity(ShowingContact);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                //searchContact(newText);
+                return false;
+            }
+        });
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
+    /*@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == R.id.action_search){
+
+            Intent ShowingContact = new Intent(HomeActivity.this, ShowingContacts.class);
+            startActivity(ShowingContact);
+        }
+
+        return super.onOptionsItemSelected(item);
+
+    }*/
 }
