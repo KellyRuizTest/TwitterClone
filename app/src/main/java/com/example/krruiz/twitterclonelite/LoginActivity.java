@@ -5,6 +5,7 @@ import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,6 +13,10 @@ import android.widget.Toast;
 
 import com.example.krruiz.twitterclonelite.Model.Prevalent;
 import com.example.krruiz.twitterclonelite.Model.Users;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -24,17 +29,19 @@ public class LoginActivity extends AppCompatActivity {
     private Button loginButton;
 
     private ProgressDialog loadingBar;
+    private FirebaseAuth auth;
+    private DatabaseReference rootRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        getSupportActionBar().hide();
-
         emailLogin = (EditText) findViewById(R.id.edit_email_login);
         passLogin = (EditText) findViewById(R.id.edit_pass_login);
         loginButton = (Button) findViewById(R.id.login_account);
+
+        auth = FirebaseAuth.getInstance();
 
         loadingBar = new ProgressDialog(this);
         loginButton.setOnClickListener(new View.OnClickListener() {
@@ -47,9 +54,9 @@ public class LoginActivity extends AppCompatActivity {
 
     private void LoginUser() {
 
-        String id = "@"+emailLogin.getText().toString();
+        String email = emailLogin.getText().toString();
         String passwordID = passLogin.getText().toString();
-        if (id.equals("")){
+        if (email.equals("")){
 
             Toast.makeText(this, "Please write your email account", Toast.LENGTH_SHORT).show();
         } else if (passwordID.equals("")){
@@ -61,58 +68,51 @@ public class LoginActivity extends AppCompatActivity {
             loadingBar.setMessage("Please wait");
             loadingBar.setCanceledOnTouchOutside(false);
             loadingBar.show();
-            AllowAccessToAccount(id, passwordID); // it can be a DaO+Room+LiveData+AndroidViewModel
+            AllowAccessToAccount(email, passwordID); // it can be a DaO+Room+LiveData+AndroidViewModel
         }
     }
 
     // change name parametrs
-    private void AllowAccessToAccount(final String id, final String password) {
+    private void AllowAccessToAccount(final String email, final String password) {
 
-        final DatabaseReference rootRef;
-        rootRef = FirebaseDatabase.getInstance().getReference();
 
-        rootRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            public void onComplete(@NonNull Task<AuthResult> task) {
 
-                if (dataSnapshot.child("Users").child(id).exists()){
+                if (task.isSuccessful()){
 
-                    Users userData = dataSnapshot.child("Users").child(id).getValue(Users.class);
-                    String passwordAux = userData.getPassword();
+                    rootRef = FirebaseDatabase.getInstance().getReference().child("Users")
+                            .child(auth.getCurrentUser().getUid());
 
-                    System.out.println("=========================================");
-                    System.out.println(userData.getId());
-                    System.out.println(passwordAux);
-                    System.out.println("=========================================");
+                    rootRef.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                    if (id.equals(userData.getId())) {
-
-                        if (password.equals(userData.getPassword())) {
-
-                            Toast.makeText(getApplicationContext(), "Login sucessfully", Toast.LENGTH_LONG).show();
                             loadingBar.dismiss();
+                            Toast.makeText(getApplicationContext(), "Login sucessfully", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-                            Prevalent.currentUser = userData;
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(intent);
                             finish();
-
-                        } else {
-                            loadingBar.dismiss();
-                            Toast.makeText(getApplicationContext(), "Password Incorrect", Toast.LENGTH_LONG).show();
                         }
-                    }
 
-                }else{
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                        loadingBar.dismiss();
+                        }
+                    });
 
-                    Toast.makeText(getApplicationContext(), "Incorrect ID", Toast.LENGTH_SHORT).show();
+                } else {
+
+                    Toast.makeText(getApplicationContext(), "Authentication Failed", Toast.LENGTH_SHORT).show();
                     loadingBar.dismiss();
-                }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                }
+
             }
         });
+
     }
 
 

@@ -1,22 +1,22 @@
 package com.example.krruiz.twitterclonelite.Model;
 
-import java.security.PublicKey;
 import java.util.List;
 
 public class Users {
 
-    public String email;
-    public String name;
-    public String id;
-    public String password;
-    public String image;
-    public String banner;
-    public String bio;
-    public String location;
-    public String sitioweb;
+    private String email;
+    private String name;
+    private String idUser;
+    private String id;
+    private String password;
+    private String image;
+    private String banner;
+    private String bio;
+    private String location;
+    private String sitioweb;
 
-    public List <Users> followers;
-    public List <Users> followings;
+    //public List <Users> followers;
+    //public List <Users> followings;
 
     public List<Tweet> tweets;
 
@@ -37,16 +37,27 @@ public class Users {
 
         this.email = email;
         this.name = name;
-        this.id = id;
+        this.idUser = id;
         this.password = password;
         this.image = imageurl;
         this.banner = bannerurl;
     }
 
-    public Users(String email, String name, String id, String password, String imageurl, String bannerurl, String bio, String location, String sitioweb) {
+    public Users (String email, String name, String id, String idUser, String password, String imageurl, String bannerurl){
+
+        this.email = email;
+        this.name = name;
+        this.idUser = idUser;
+        this.password = password;
+        this.image = imageurl;
+        this.banner = bannerurl;
+        this.id = id;
+    }
+    public Users(String email, String name, String id, String idUser, String password, String imageurl, String bannerurl, String bio, String location, String sitioweb) {
         this.email = email;
         this.name = name;
         this.id = id;
+        this.idUser = idUser;
         this.password = password;
         this.image = imageurl;
         this.banner = bannerurl;
@@ -54,6 +65,30 @@ public class Users {
         this.location = location;
         this.sitioweb = sitioweb;
     }
+
+    public Users(Users e){
+
+        this.email = e.email;
+        this.name = e.name;
+        this.idUser = e.idUser;
+        this.id = e.id;
+        this.password = e.password;
+        this.image = e.image;
+        this.banner = e.banner;
+        this.bio = e.bio;
+        this.location = e.location;
+        this.sitioweb = e.sitioweb;
+
+    }
+
+    public void addTweets(List<Tweet> aux){
+
+        for (int i = 0; i < aux.size(); i++) {
+            this.tweets.add(aux.get(i));
+        }
+
+    }
+
 
     public String getBio() {
         return bio;
@@ -111,12 +146,12 @@ public class Users {
         this.email = email;
     }
 
-    public String getId() {
-        return id;
+    public String getIdUser() {
+        return idUser;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setIdUser(String id) {
+        this.idUser = id;
     }
 
     public String getPassword() {
@@ -126,4 +161,23 @@ public class Users {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void printingData(){
+
+        System.out.println("===== Let's printer all data =====");
+        System.out.println("Name: "+getName());
+        System.out.println("Id: "+getId());
+        System.out.println("IdUser: "+getIdUser());
+        System.out.println("Email: "+getEmail());
+        System.out.println("Image: "+getImage());
+    }
+
 }

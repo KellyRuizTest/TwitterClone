@@ -5,30 +5,32 @@
     android:id="@+id/layout_profile"
     android:layout_width="match_parent"
     android:layout_height="190dp"
-    android:background="@color/colorPrimary"
+    android:background="@color/colorAccent"
     android:gravity="bottom"
-    android:onClick="onProfileChange"
     android:orientation="vertical"
-    android:paddingLeft="20dp"
+    android:paddingLeft="10dp"
     android:paddingTop="2dp"
-    android:paddingRight="12dp"
+    android:paddingRight="8dp"
     android:paddingBottom="10dp"
     android:theme="@style/Theme.MaterialComponents.NoActionBar">
 
-    <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/profile_image"
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:src="@drawable/profile"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/usermale"
+        android:onClick="onProfileChange"
         app:civ_border_color="@color/colorPrimaryDark"
-        app:civ_border_width="2dp" />
+        app:civ_border_width="1dp" />
 
 
     <TextView
         android:id="@+id/nameuser"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="2dp"
+        android:layout_marginTop="4dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="@color/common_google_signin_btn_text_dark_focused"
         android:textStyle="bold" />
@@ -36,15 +38,18 @@
 
     <TextView
         android:id="@+id/iduser"
-        android:layout_width="wrap_content"
+        android:layout_width="103dp"
         android:layout_height="wrap_content"
-        android:text="user"
-        android:textColor="@color/common_google_signin_btn_text_light_pressed"
-        android:textStyle="bold" />
+        android:hint="User"
+        android:textColorHint="@android:color/darker_gray"
+        android:textColor="@android:color/darker_gray"
+        android:fontFamily="@font/capriola"
+        />
 
     <LinearLayout
         android:layout_width="309dp"
         android:layout_height="29dp"
+        android:layout_marginTop="4dp"
         android:orientation="horizontal">
 
         <TextView
@@ -52,14 +57,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="0dp"
-            android:text="24" />
+            android:textSize="12sp"
+            android:textColor="@android:color/black"
+            android:onClick="onProfileFollowing" />
 
         <TextView
             android:id="@+id/following"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="4dp"
-            android:text="Following" />
+            android:text="Following"
+            android:textColor="@android:color/black"
+            android:textSize="12sp"
+            android:onClick="onProfileFollowing" />
 
 
         <TextView
@@ -68,14 +78,19 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:paddingLeft="0dp"
-            android:text="24" />
+            android:textSize="12sp"
+            android:textColor="@android:color/black"
+            android:onClick="onProfileFollowers" />
 
         <TextView
             android:id="@+id/followers"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="4dp"
-            android:text="Follower" />
+            android:text="Follower"
+            android:textColor="@android:color/black"
+            android:textSize="12sp"
+            android:onClick="onProfileFollowers" />
 
 
     </LinearLayout>

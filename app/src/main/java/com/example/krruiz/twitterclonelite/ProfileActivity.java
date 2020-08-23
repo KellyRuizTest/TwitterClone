@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,13 +20,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.krruiz.twitterclonelite.Model.Prevalent;
+import com.example.krruiz.twitterclonelite.Model.Users;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -52,11 +59,16 @@ public class ProfileActivity extends AppCompatActivity {
     private StorageReference ProfileImagRef;
     private StorageReference ProfileBanner;
 
+    private FirebaseUser firebaseUser;
+
     // others complement
     private Uri selectImage;
     private String productRandomKey, saveCurrentDate, saveCurrenTime, downloadImageURL;
 
     private int kindPhoto = 0; // 0 for profile, 1 for banner
+    private Users actualUser11;
+
+    String idA, idUser, name, email, image, bio, banner, location,sitio;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,10 +91,9 @@ public class ProfileActivity extends AppCompatActivity {
         UserBanner = (ImageView) findViewById(R.id.image_banner);
         UpdateProfile = (Button) findViewById(R.id.updateprofile);
 
-        loadingBar = new ProgressDialog(this);
+        fillUserData();
 
-        Userid.setText(Prevalent.currentUser.getId());
-        UserName.setText(Prevalent.currentUser.getName());
+        loadingBar = new ProgressDialog(this);
 
         UserProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,13 +125,56 @@ public class ProfileActivity extends AppCompatActivity {
         UpdateProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadingBar.setTitle("Actualizando Perfil");
+                loadingBar.setTitle("Updating Profile");
                 loadingBar.setMessage("Please wait");
                 loadingBar.setCanceledOnTouchOutside(false);
                 loadingBar.show();
                 validateData();
             }
         });
+    }
+
+    private void fillUserData(){
+
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference Db = FirebaseDatabase.getInstance().getReference().child("Users").child(firebaseUser.getUid());
+
+        Db.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                idA = dataSnapshot.getValue(Users.class).getId();
+                name = dataSnapshot.getValue(Users.class).getName();
+                email = dataSnapshot.getValue(Users.class).getEmail();
+                idUser = dataSnapshot.getValue(Users.class).getIdUser();
+                bio = dataSnapshot.getValue(Users.class).getBio();
+                location = dataSnapshot.getValue(Users.class).getLocation();
+                sitio = dataSnapshot.getValue(Users.class).getSitioweb();
+                banner = dataSnapshot.getValue(Users.class).getBanner();
+                image = dataSnapshot.getValue(Users.class).getImage();
+
+                System.out.println("=====Printing our Data got from Database in varialbles=====");
+                System.out.println("ID"+idUser);
+                System.out.println("NAME"+name);
+                System.out.println("EMAIL"+email);
+                System.out.println("============================================================");
+
+                Userid.setText(idUser);
+                UserName.setText(name);
+                UserBio.setText(bio);
+                UserLocation.setText(location);
+                UserSite.setText(sitio);
+
+                //ImageView imageUser = (ImageView) findViewById(R.id.profile_image);
+                Picasso.get().load(image)
+                        .into(UserProfile);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     private void openGallery() {
@@ -132,15 +186,14 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         selectImage = data.getData();
 
         if (requestCode == 1 && resultCode == RESULT_OK && data != null){
 
             if (kindPhoto == 0) {
-                Picasso.with(this).load(selectImage).fit().centerCrop().into(UserProfile);
+                Picasso.get().load(selectImage).fit().centerCrop().into(UserProfile);
             } else {
-                Picasso.with(this).load(selectImage).fit().centerCrop().into(UserBanner);
+                Picasso.get().load(selectImage).fit().centerCrop().into(UserBanner);
             }
         }else {
             Toast.makeText(ProfileActivity.this, "There is a issue", Toast.LENGTH_SHORT).show();
@@ -160,10 +213,13 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void validateData(){
 
-        String name_aux = UserName.getText().toString();
+        String name_aux = UserName.getText().toString().trim();
 
-        if (name_aux == null || name_aux.equals("") || selectImage == null){
-            Toast.makeText(ProfileActivity.this, "name and profile are empty", Toast.LENGTH_SHORT).show();
+        System.out.println("DATA: "+UserName.getText().toString().trim());
+
+        if ((TextUtils.isEmpty(name_aux)) || name_aux == null ){
+            Toast.makeText(ProfileActivity.this, "Name are empty: "+name_aux, Toast.LENGTH_SHORT).show();
+            loadingBar.dismiss();
         } else {
             StoreProductInformation();
         }
@@ -218,7 +274,6 @@ public class ProfileActivity extends AppCompatActivity {
                             System.out.println("========================================================");
 
                             Toast.makeText(getApplicationContext(), "Profile Image URL sucessfully ", Toast.LENGTH_LONG);
-
                             saveProductInfoDatabase();
                         }
                     }
@@ -229,10 +284,10 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void saveProductInfoDatabase() {
 
-        String id = Prevalent.currentUser.getId();
+        String id = idUser;
 
         HashMap<String, Object> photoMap = new HashMap<>();
-        photoMap.put("name", Prevalent.currentUser.getName());
+        photoMap.put("name", UserName.getText().toString().trim());
         photoMap.put("image", downloadImageURL);
 
         if (UserBio.getText().toString() != null || !(UserBio.getText().toString().equals(""))) {

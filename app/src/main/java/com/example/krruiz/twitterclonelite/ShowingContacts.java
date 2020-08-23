@@ -2,34 +2,42 @@ package com.example.krruiz.twitterclonelite;
 
 
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.krruiz.twitterclonelite.Model.Tweet;
 import com.example.krruiz.twitterclonelite.Model.Users;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 public class ShowingContacts extends AppCompatActivity {
 
     private RecyclerView recyclerViewContacts;
     private TextView ShowingPutExtra;
-    private DatabaseReference UserFirebase;
+    private DatabaseReference MyDB;
     private String QUERY_TO;
+    private FirebaseUser firebaseUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,17 +46,17 @@ public class ShowingContacts extends AppCompatActivity {
 
         setTitle("Buscar Tweets");
 
-        UserFirebase = FirebaseDatabase.getInstance().getReference().child("Users");
+        MyDB = FirebaseDatabase.getInstance().getReference().child("Users");
         String aux = getIntent().getStringExtra(HomeActivity.QUERY_FIREBASE);
 
         recyclerViewContacts = findViewById(R.id.show_contact_recyclerview);
         recyclerViewContacts.setHasFixedSize(true);
         recyclerViewContacts.setLayoutManager(new LinearLayoutManager(this));
 
-       // recyclerViewContacts.setAdapter(firebaseRecyclerAdapter);
-
         QUERY_TO = getIntent().getStringExtra(HomeActivity.QUERY_FIREBASE);
         Log.d("RESULT_OK", QUERY_TO);
+
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
     }
 
@@ -56,9 +64,7 @@ public class ShowingContacts extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        Query firebaseSearchQuery = UserFirebase.orderByChild("name").startAt(QUERY_TO).endAt(QUERY_TO + "\uf8ff");
-
-                //startAt(QUERY_TO).endAt(QUERY_TO + "\uf8ff");
+        Query firebaseSearchQuery = MyDB.orderByChild("name").startAt(QUERY_TO).endAt(QUERY_TO + "\uf8ff");
 
         FirebaseRecyclerOptions<Users> options = new FirebaseRecyclerOptions.Builder<Users>().setQuery(firebaseSearchQuery, Users.class).build();
 
@@ -70,8 +76,9 @@ public class ShowingContacts extends AppCompatActivity {
             protected void onBindViewHolder(@NonNull UserViewHolder holder, int position, @NonNull Users model) {
 
                 Log.d("RESULT_OK", "Entre a onBindViewHolder de RecyclerAdapter");
-                holder.bindUser(getApplicationContext(), model.getName(), model.getId(), model.getImage());
+                holder.bindUser(getApplicationContext(), model);
 
+                isFollowing(model.getId(), holder.buttonFollow);
             }
 
             @NonNull
@@ -90,64 +97,88 @@ public class ShowingContacts extends AppCompatActivity {
 
     }
 
-    public class UserViewHolder extends RecyclerView.ViewHolder{
+    private void isFollowing(final String id, final Button btn) {
+
+        MyDB = FirebaseDatabase.getInstance().getReference()
+                .child("Follow").child(firebaseUser.getUid()).child("following");
+
+        MyDB.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.child(id).getKey().equals(firebaseUser.getUid())) {
+
+                    btn.setVisibility(View.GONE);
+                } else {
+
+                    if (dataSnapshot.child(id).exists()) {
+                        btn.setText("following");
+                        btn.setBackgroundResource(R.drawable.borde_round_follow);
+                    } else {
+                        btn.setText("follow");
+                        btn.setBackgroundResource(R.drawable.borde_round_unfollow);
+                        btn.setTextColor(getColor(R.color.colorPrimaryDark));
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+    }
+
+    public class UserViewHolder extends RecyclerView.ViewHolder {
 
         View v;
-        //Users tweetAux;
+        Button buttonFollow;
 
         public UserViewHolder(@NonNull View itemView) {
             super(itemView);
             v = itemView;
-            //context = itemView.getContext();
+            buttonFollow = (Button) v.findViewById(R.id.button_follow);
         }
 
-        public void bindUser (Context ctx, String name, String id, String userImage){
+        public void bindUser(Context ctx, final Users user) {
 
             Log.d("RESULT_OK", "Entre a bindUser from UserViewHolderClass");
 
-            //tweetAux = users;
             TextView nameUser = (TextView) v.findViewById(R.id.show_contact_name);
             TextView idUser = (TextView) v.findViewById(R.id.show_contact_id);
             ImageView imageUser = (ImageView) v.findViewById(R.id.show_contact_image);
+            TextView bioUser = (TextView) v.findViewById(R.id.show_bio);
 
-            nameUser.setText(name);
-            idUser.setText(id);
+            nameUser.setText(user.getName());
+            idUser.setText(user.getIdUser());
+            bioUser.setText(user.getBio());
 
-            Picasso.with(ctx).load(userImage)
+            Picasso.get().load(user.getImage())
                     .into(imageUser);
 
+            buttonFollow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                if (buttonFollow.getText().toString().equals("follow")) {
+
+                    FirebaseDatabase.getInstance().getReference().child("Follow").child(firebaseUser.getUid()).child("following")
+                            .child(user.getId()).setValue(user);
+
+                    FirebaseDatabase.getInstance().getReference().child("Follow").child(user.getId()).child("followers")
+                         .child(firebaseUser.getUid()).setValue(HomeActivity.actualUser);
+
+                }else {
+
+                    FirebaseDatabase.getInstance().getReference().child("Follow").child(firebaseUser.getUid()).child("following")
+                            .child(user.getId()).removeValue();
+
+                    FirebaseDatabase.getInstance().getReference().child("Follow").child(user.getId()).child("followers")
+                            .child(firebaseUser.getUid()).removeValue();
+
+                    }
+                }
+
+            });
         }
     }
-
-     /*@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_searc, menu);
-
-        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-        SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
-
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setSubmitButtonEnabled(true);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                //searchContact(query);
-
-                Log.d("RESULT_OK", "Entre a SearchView");
-                firebaseSearch();
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                //searchContact(newText);
-                return false;
-            }
-        });
-        return super.onCreateOptionsMenu(menu);
-    }*/
-
-
 }
+

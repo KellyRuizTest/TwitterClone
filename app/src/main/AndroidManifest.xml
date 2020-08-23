@@ -14,6 +14,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".PersonalFeedActivity"></activity>
+        <activity android:name=".CommentActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,11 +32,20 @@
         <activity android:name=".RegistrationActivity" />
         <activity
             android:name=".HomeActivity"
-            android:label="@string/title_activity_home"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".TweetingActivity" />
+            android:label="@string/title_activity_home" />
+        <activity
+            android:name=".TweetingActivity"
+            android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ProfileActivity" />
-        <activity android:name=".ShowingContacts"/>
+        <activity android:name=".ShowingContacts" />
+        <activity
+            android:name=".ListFollowing"
+            android:parentActivityName=".HomeActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ListFollowers"
+            android:parentActivityName=".HomeActivity"
+            android:theme="@style/AppTheme" />
     </application>
 
 </manifest>

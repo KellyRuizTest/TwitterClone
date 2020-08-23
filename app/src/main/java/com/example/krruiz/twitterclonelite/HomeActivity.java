@@ -3,40 +3,38 @@ package com.example.krruiz.twitterclonelite;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import androidx.appcompat.widget.SearchView;
-import androidx.core.view.MenuItemCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
+import android.provider.ContactsContract;
 import android.util.Log;
-import android.view.MenuInflater;
-import android.view.View;
-import com.google.android.material.navigation.NavigationView;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.example.krruiz.twitterclonelite.Model.Prevalent;
 import com.example.krruiz.twitterclonelite.Model.Tweet;
+import com.example.krruiz.twitterclonelite.Model.Users;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
+import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -47,13 +45,35 @@ public class HomeActivity extends AppCompatActivity
     private TweetAdapter tweetAdapter;
 
     private DatabaseReference dataRef;
+    private DatabaseReference MyDB;
+    private FirebaseUser firebaseUser;
+    private FirebaseAuth auth;
     private List<Tweet> tweetsUploads;
+    private List<String> tweetsFollowings;
 
     private TextView textNameUser;
     private TextView textIdUser;
+    private TextView followins;
+    private TextView followers;
     private ImageView imageViewUser;
 
     private LinearLayout layoutProfile;
+    public static Users actualUser;
+
+    private int nfollowing;
+    private int nfollowers;
+
+    private ArrayList<String> followingUsers;
+    private ArrayList<String> followersUsers;
+    private static final String TAG = HomeActivity.class.getSimpleName();
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+
+        Log.d(TAG, "onStart()");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,15 +83,13 @@ public class HomeActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         setTitle("Inicio");
+        Log.d(TAG, "onCreate()");
 
         layoutProfile = (LinearLayout) findViewById(R.id.layout_profile);
 
-        System.out.println("==============Lets Test======================");
-        String userN = Prevalent.currentUser.getName();
-        String userId = Prevalent.currentUser.getId();
-        System.out.println("Nombre: "+userN);
-        System.out.println("ID: "+userId);
-        System.out.println("=============================================");
+       // FollowList();
+
+        auth = FirebaseAuth.getInstance();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.tweet);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -92,12 +110,15 @@ public class HomeActivity extends AppCompatActivity
 
                 textNameUser = (TextView) findViewById(R.id.nameuser);
                 textIdUser = (TextView) findViewById(R.id.iduser);
+                followins = (TextView) findViewById(R.id.numberfollowing);
+                followers = (TextView) findViewById(R.id.numberfollowers);
+                imageViewUser = (ImageView) findViewById(R.id.profile_image);
 
-                textNameUser.setText(Prevalent.currentUser.getName());
-                textIdUser.setText(Prevalent.currentUser.getId());
+                userInfo();
+                nFollowList(followins, followers);
+
 
             }
-
         };
 
         drawer.addDrawerListener(toggle);
@@ -106,35 +127,123 @@ public class HomeActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        recyclerView = findViewById(R.id.recycler_view);
+        recyclerView = findViewById(R.id.recycler_view_to_show_feeds);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
+        LinearLayoutManager linearLayout = new LinearLayoutManager(this);
+        linearLayout.setReverseLayout(true);
+        linearLayout.setStackFromEnd(true);
+        recyclerView.setLayoutManager(linearLayout);
         tweetsUploads = new ArrayList<>();
 
-        dataRef = FirebaseDatabase.getInstance().getReference("Tweets");
-        dataRef.addValueEventListener(new ValueEventListener() {
+        tweetAdapter = new TweetAdapter(getApplicationContext(), tweetsUploads);
+        recyclerView.setAdapter(tweetAdapter);
+
+        checkFollowing();
+
+    }
+
+    private void userInfo() {
+        DatabaseReference userInfo = FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        userInfo.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()){
-                    Tweet tweets = postSnapshot.getValue(Tweet.class);
-                    tweetsUploads.add(tweets);
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    Users aux = snapshot.getValue(Users.class);
+                    textNameUser.setText(aux.getName());
+                    textIdUser.setText(aux.getIdUser());
+                    Picasso.get().load(aux.getImage()).placeholder(R.drawable.usermale).into(imageViewUser);
                 }
-                for (int i=0; i<tweetsUploads.size(); i++){
-                    System.out.println("================");
-                    System.out.println(tweetsUploads.get(i).getTweet());
-                    System.out.println("================");
-
-                }
-                tweetAdapter = new TweetAdapter(HomeActivity.this, tweetsUploads);
-                recyclerView.setAdapter(tweetAdapter);
-
             }
 
             @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
+
+    private void checkFollowing() {
+
+        tweetsFollowings = new ArrayList<>();
+
+        DatabaseReference tweetsToShow = FirebaseDatabase.getInstance().getReference().child("Follow").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("following");
+        tweetsToShow.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                if (snapshot.exists()){
+                    tweetsFollowings.clear();
+                    for (DataSnapshot eachone: snapshot.getChildren())
+                    {
+                        tweetsFollowings.add(eachone.getKey());
+                    }
+                    retrieveTweets();
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
+
+    private void retrieveTweets() {
+
+        final DatabaseReference tweetInfo = FirebaseDatabase.getInstance().getReference().child("Tweets");
+        tweetInfo.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                for(DataSnapshot tweetsIter : snapshot.getChildren()){
+                    Tweet tweetOne = tweetsIter.getValue(Tweet.class);
+
+                    for (String userId : tweetsFollowings){
+                        if (tweetOne.getUser().equals(userId)){
+                            tweetsUploads.add(tweetOne);
+                        }
+                        tweetAdapter.notifyDataSetChanged();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
+
+
+   private void nFollowList(final TextView followingBtn, final TextView followersBtn){
+
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        DatabaseReference Db = FirebaseDatabase.getInstance().getReference()
+                .child("Follow").child(firebaseUser.getUid()).child("following");
+
+        Db.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                followingBtn.setText(""+dataSnapshot.getChildrenCount()+"");
+            }
+            @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(HomeActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        Db = FirebaseDatabase.getInstance().getReference()
+                .child("Follow").child(firebaseUser.getUid()).child("followers");
+
+        Db.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                followersBtn.setText(""+dataSnapshot.getChildrenCount()+"");
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
 
@@ -159,7 +268,7 @@ public class HomeActivity extends AppCompatActivity
         if (id == R.id.nav_camera){
 
             //Toast.makeText(HomeActivity.this, "You clicked profile", Toast.LENGTH_SHORT).show();
-            Intent intent1 = new Intent(HomeActivity.this, ProfileActivity.class);
+            Intent intent1 = new Intent(HomeActivity.this, PersonalFeedActivity.class);
             startActivity(intent1);
 
         }
@@ -175,11 +284,11 @@ public class HomeActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_logout){
 
-            Prevalent.currentUser = null;
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             finish();
+            FirebaseAuth.getInstance().signOut();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -189,10 +298,29 @@ public class HomeActivity extends AppCompatActivity
 
     public void onProfileChange(View v){
 
-        Intent intent1 = new Intent(HomeActivity.this, ProfileActivity.class);
+        Intent intent1 = new Intent(HomeActivity.this, PersonalFeedActivity.class);
         startActivity(intent1);
 
     }
+
+    public void onProfileFollowers(View v){
+
+        Intent intentFollowers = new Intent(HomeActivity.this, ListFollowers.class);
+        //intentFollowers.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intentFollowers);
+        //finish();
+
+    }
+
+    public void onProfileFollowing(View v){
+
+        Intent intentFollowing = new Intent(HomeActivity.this, ListFollowing.class);
+        //intentFollowing.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intentFollowing);
+        //finish();
+
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -208,7 +336,6 @@ public class HomeActivity extends AppCompatActivity
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                //searchContact(query);
 
                 Log.d("RESULT_OK", "Entre a SearchView");
                 Intent ShowingContact = new Intent(HomeActivity.this, ShowingContacts.class);
@@ -219,24 +346,40 @@ public class HomeActivity extends AppCompatActivity
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                //searchContact(newText);
                 return false;
             }
         });
         return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d(TAG, "onRestart()");
+    }
 
-    /*@Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume()");
+    }
 
-        if (item.getItemId() == R.id.action_search){
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause()");
+    }
 
-            Intent ShowingContact = new Intent(HomeActivity.this, ShowingContacts.class);
-            startActivity(ShowingContact);
-        }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop()");
+    }
 
-        return super.onOptionsItemSelected(item);
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy()");
+    }
 
-    }*/
 }

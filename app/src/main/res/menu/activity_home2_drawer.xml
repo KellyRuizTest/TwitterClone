@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:showIn="navigation_view">
+    tools:showIn="navigation_view"
+    >
 
-    <group android:checkableBehavior="single">
+    <group android:checkableBehavior="single"
+            android:visible="true"
+        >
         <item
             android:id="@+id/nav_camera"
             android:icon="@drawable/profile"
@@ -22,7 +26,13 @@
             android:title="Moments" />
     </group>
 
-    <item android:title="Settings">
+    <group android:id="@+id/Settins"
+            android:checkableBehavior="single">
+    <item android:title="Settings"
+            android:visible="true"
+            android:iconTintMode="add"
+        android:iconTint="@color/colorPrimaryDark"
+        >
         <menu>
             <item
                 android:id="@+id/nav_share"
@@ -32,6 +42,7 @@
                 android:title="Help Center" />
         </menu>
     </item>
+    </group>
 
     <item android:title="">
         <menu>

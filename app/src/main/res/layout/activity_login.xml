@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorAccent"
     tools:context=".LoginActivity">
 
     <TextView
@@ -40,7 +42,9 @@
         android:layout_marginTop="186dp"
         android:layout_marginEnd="41dp"
         android:ems="10"
-        android:hint="ID"
+        android:textColor="@android:color/black"
+        android:textColorHint="@android:color/darker_gray"
+        android:hint="Email"
         android:inputType="textEmailAddress" />
 
     <EditText
@@ -54,6 +58,8 @@
         android:layout_marginTop="242dp"
         android:layout_marginEnd="43dp"
         android:ems="10"
+        android:textColor="@android:color/black"
+        android:textColorHint="@android:color/darker_gray"
         android:hint="Password"
         android:inputType="textPassword" />
 
@@ -67,20 +73,20 @@
         android:layout_marginEnd="44dp"
         android:text="Olvidaste tu password?" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/login_account"
-        android:layout_width="187dp"
-        android:layout_height="38dp"
+        android:layout_width="167dp"
+        android:layout_height="45dp"
         android:layout_alignEnd="@+id/imageView2"
         android:layout_alignParentTop="true"
         android:layout_marginTop="342dp"
         android:layout_marginEnd="-35dp"
-        android:background="@drawable/borde_redondo"
         android:fontFamily="@font/capriola"
         android:text="Login"
+        app:cornerRadius="30dp"
         android:textAllCaps="false"
         android:textColor="@android:color/background_light"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:textStyle="bold" />
 
 </RelativeLayout>

@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RegistrationActivity">
+    tools:context=".RegistrationActivity"
+    android:background="@color/colorAccent"
+    >
 
     <EditText
         android:id="@+id/edit_name"
@@ -18,6 +20,7 @@
         android:layout_marginEnd="27dp"
         android:ems="10"
         android:hint="Name"
+        android:textColorHint="@android:color/darker_gray"
         android:inputType="textPersonName" />
 
     <TextView
@@ -46,6 +49,7 @@
         android:layout_marginTop="197dp"
         android:layout_marginEnd="27dp"
         android:ems="10"
+        android:textColorHint="@android:color/darker_gray"
         android:hint="ID"
         android:inputType="textPersonName" />
 
@@ -61,6 +65,7 @@
         android:layout_marginEnd="26dp"
         android:ems="10"
         android:hint="Password"
+        android:textColorHint="@android:color/darker_gray"
         android:inputType="textPassword" />
 
     <EditText
@@ -75,6 +80,7 @@
         android:layout_marginEnd="29dp"
         android:ems="10"
         android:hint="Email"
+        android:textColorHint="@android:color/darker_gray"
         android:inputType="textEmailAddress" />
 
     <ImageView
@@ -90,10 +96,9 @@
     <Button
         android:id="@+id/register_account"
         android:layout_width="152dp"
-        android:layout_height="36dp"
+        android:layout_height="40dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-
         android:layout_marginTop="371dp"
         android:layout_marginEnd="27dp"
         android:background="@drawable/borde_redondo"
