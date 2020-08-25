@@ -4,16 +4,25 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toolbar;
 
+import com.example.krruiz.twitterclonelite.Model.LikeFragment;
+import com.example.krruiz.twitterclonelite.Model.MediaFragment;
+import com.example.krruiz.twitterclonelite.Model.RepliesFragment;
 import com.example.krruiz.twitterclonelite.Model.Tweet;
+import com.example.krruiz.twitterclonelite.Model.TweetsFragment;
 import com.example.krruiz.twitterclonelite.Model.Users;
+import com.google.android.material.tabs.TabItem;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -43,12 +52,31 @@ public class PersonalFeedActivity extends AppCompatActivity {
 
     private RecyclerView recyclerViewTweets;
 
+    private ViewPager viewPager;
+    private TabLayout tabLayout;
+
+    private TweetsFragment tweetsFragment;
+    private LikeFragment likeFragment;
+    private RepliesFragment repliesFragment;
+    private MediaFragment mediaFragment;
+
+    private TabItem tabTweets;
+    private TabItem tabReplies;
+    private TabItem tabLikes;
+    private TabItem tabMedia;
+
+    private PageAdapter pageAdapter;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_personal_feed);
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        // getting user
+
 
         // init variables
         followingButton = findViewById(R.id.follwing_or_not);
@@ -59,7 +87,6 @@ public class PersonalFeedActivity extends AppCompatActivity {
         numberFollowings = findViewById(R.id.number_following_profile);
         numberFollowers = findViewById(R.id.number_followers_profile);
 
-        // getting user
         Bundle bundle = getIntent().getExtras();
         if (bundle != null){
             idUser = bundle.getString("idUser");
@@ -70,24 +97,43 @@ public class PersonalFeedActivity extends AppCompatActivity {
             followingButton.setVisibility(View.GONE);
         }
 
-        System.out.println("<========================================================================>");
-        System.out.println("What is the name user");
-        System.out.println(idUser);
-        System.out.println("<=======================================================================>");
+        // Viewpager
+        tabLayout = findViewById(R.id.tabLayout);
+        viewPager = findViewById(R.id.view_pager);
+        tabTweets = findViewById(R.id.tab_tweets);
+        tabReplies = findViewById(R.id.tab_replies);
+        tabLikes =findViewById(R.id.tab_likes);
+        tabMedia = findViewById(R.id.tab_media);
+        pageAdapter = new PageAdapter(getSupportFragmentManager(), tabLayout.getTabCount(), idUser);
+        viewPager.setAdapter(pageAdapter);
 
-        // recycler view
-        recyclerViewTweets = findViewById(R.id.recycler_view_profile_feed);
-        recyclerViewTweets.setHasFixedSize(true);
+        // Fragment
+        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.getTabAt(0).setText("Tweets");
+        tabLayout.getTabAt(1).setText("Replies");
+        tabLayout.getTabAt(2).setText("Media");
+        tabLayout.getTabAt(3).setText("Likes");
+        /*tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+                if (tab.getPosition() == 1){
 
-        LinearLayoutManager linearLayout = new LinearLayoutManager(this);
-        linearLayout.setReverseLayout(true);
-        linearLayout.setStackFromEnd(true);
-        recyclerViewTweets.setLayoutManager(linearLayout);
-        tweetsUploads = new ArrayList<>();
+                }
+            }
 
-        tweetAdapter = new TweetAdapter(getApplicationContext(), tweetsUploads);
-        recyclerViewTweets.setAdapter(tweetAdapter);
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
 
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));*/
 
         // logic
         profileButton.setOnClickListener(new View.OnClickListener() {
@@ -108,7 +154,7 @@ public class PersonalFeedActivity extends AppCompatActivity {
         userInfo();
         getQtyFollowings();
         getQtyFollowers();
-        getTweetsFeed();
+        //getTweetsFeed();
 
 
     }
@@ -124,31 +170,6 @@ public class PersonalFeedActivity extends AppCompatActivity {
                 }else{
                     followingButton.setText("Follow");
                 }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
-
-    private void getTweetsFeed() {
-
-        DatabaseReference tweetsRef = FirebaseDatabase.getInstance().getReference().child("Tweets");
-        tweetsUploads.clear();
-
-        tweetsRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                for (DataSnapshot each: snapshot.getChildren()){
-                    Tweet auxEachOne = each.getValue(Tweet.class);
-                    if (auxEachOne.getUser().equals(idUser)){
-                        tweetsUploads.add(auxEachOne);
-                    }
-                }
-                tweetAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -226,6 +247,7 @@ public class PersonalFeedActivity extends AppCompatActivity {
     public void onProfileFollowing(View view) {
 
         Intent intentFollowers = new Intent(PersonalFeedActivity.this, ListFollowing.class);
+        intentFollowers.putExtra("idforcheck", idUser);
         //intentFollowers.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intentFollowers);
     }
@@ -233,6 +255,7 @@ public class PersonalFeedActivity extends AppCompatActivity {
     public void onProfileFollowers(View view) {
 
         Intent intentFollowers = new Intent(PersonalFeedActivity.this, ListFollowers.class);
+        intentFollowers.putExtra("idforcheck", idUser);
         //intentFollowers.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intentFollowers);
     }

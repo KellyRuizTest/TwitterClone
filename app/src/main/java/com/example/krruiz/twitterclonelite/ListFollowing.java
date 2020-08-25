@@ -1,6 +1,7 @@
 package com.example.krruiz.twitterclonelite;
 
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,6 +30,7 @@ public class ListFollowing extends AppCompatActivity {
     private List<Users> userUploadsFollowing;
     public List<String> listIduploads = new ArrayList<>();
     private UserAdapter userAdapterFollowing;
+    private String idUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +38,17 @@ public class ListFollowing extends AppCompatActivity {
         setContentView(R.layout.activity_list_following);
 
         setTitle("Following");
-
         firebaseUserFollowings = FirebaseAuth.getInstance();
+
+
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null){
+            idUser = bundle.getString("idforcheck");
+
+        }else{
+            idUser = firebaseUserFollowings.getUid();
+        }
+
 
         recyclerViewFolloweing = findViewById(R.id.list_following_recycler);
         recyclerViewFolloweing.setHasFixedSize(true);
@@ -53,7 +64,7 @@ public class ListFollowing extends AppCompatActivity {
     private void searchingFollowingsById() {
 
 
-        MyDBFollowers = FirebaseDatabase.getInstance().getReference().child("Follow").child(firebaseUserFollowings.getCurrentUser().getUid()).child("following");
+        MyDBFollowers = FirebaseDatabase.getInstance().getReference().child("Follow").child(idUser).child("following");
 
 
         MyDBFollowers.addValueEventListener(new ValueEventListener() {

@@ -30,6 +30,7 @@ public class ListFollowers extends AppCompatActivity {
     private List<Users> userUploads;
     public List<String> listIduploads = new ArrayList<>();
     private UserAdapter userAdapter;
+    private String idUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +38,16 @@ public class ListFollowers extends AppCompatActivity {
         setContentView(R.layout.activity_list_followers);
 
         setTitle("Followers");
-
         firebaseUserFollowers = FirebaseAuth.getInstance();
+
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null){
+            idUser = bundle.getString("idforcheck");
+
+        }else{
+            idUser = firebaseUserFollowers.getUid();
+        }
+
 
         recyclerViewFollowers = findViewById(R.id.list_followers_recyclerview);
         recyclerViewFollowers.setHasFixedSize(true);
@@ -53,7 +62,7 @@ public class ListFollowers extends AppCompatActivity {
 
     private void searchingFollowersById() {
 
-        MyDBFollowers = FirebaseDatabase.getInstance().getReference().child("Follow").child(firebaseUserFollowers.getCurrentUser().getUid()).child("followers");
+        MyDBFollowers = FirebaseDatabase.getInstance().getReference().child("Follow").child(idUser).child("followers");
 
 
         MyDBFollowers.addValueEventListener(new ValueEventListener() {

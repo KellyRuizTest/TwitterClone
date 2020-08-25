@@ -23,6 +23,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class RegistrationActivity extends AppCompatActivity {
 
@@ -58,24 +60,27 @@ public class RegistrationActivity extends AppCompatActivity {
     }
     private void creatingAccount() {
 
-        String id = "@"+idEdit.getText().toString();
+        String id = idEdit.getText().toString();
         String name = nameEdit.getText().toString();
         String email = emailEdit.getText().toString();
         String password = passEdit.getText().toString();
 
         if (id == null || id.equals("")){
-            Toast.makeText(this, "Please input an id account", Toast.LENGTH_SHORT);
+            Toast.makeText(this, "Please input an id account", Toast.LENGTH_SHORT).show();
         }else if (email == null || email.equals("")){
 
-            Toast.makeText(this, "Please input an email account", Toast.LENGTH_SHORT);
+            Toast.makeText(this, "Please input an email account", Toast.LENGTH_SHORT).show();
         } else if (password == null || password.equals("")){
 
-            Toast.makeText(this, "Please write a password account", Toast.LENGTH_SHORT);
+            Toast.makeText(this, "Please write a password account", Toast.LENGTH_SHORT).show();
         }else if (password.length() < 6) {
 
             Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
+        }else if (validateEmail()){
+            Toast.makeText(this, "Invalid email!", Toast.LENGTH_SHORT).show();
         }else {
 
+            id = "@"+idEdit.getText().toString();
             loadingBar.setTitle("Create Account");
             loadingBar.setMessage("Please wait");
             loadingBar.setCanceledOnTouchOutside(false);
@@ -83,6 +88,14 @@ public class RegistrationActivity extends AppCompatActivity {
            // Toast.makeText(this, "Registering", Toast.LENGTH_SHORT).show();
             validateEmailandId(id, name, email, password);
         }
+    }
+
+    private Boolean validateEmail(){
+        String email = emailEdit.getText().toString();
+        String checkemail = ("[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+");
+
+        if ((email.matches(checkemail))){ return false; }else { return true; }
+
     }
 
     private void validateEmailandId(final String id, final String name, final String email, final String password){

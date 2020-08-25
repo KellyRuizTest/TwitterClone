@@ -175,9 +175,7 @@ public class HomeActivity extends AppCompatActivity
                 if (snapshot.exists()){
                     tweetsFollowings.clear();
                     for (DataSnapshot eachone: snapshot.getChildren())
-                    {
-                        tweetsFollowings.add(eachone.getKey());
-                    }
+                    { tweetsFollowings.add(eachone.getKey()); }
                     retrieveTweets();
                 }
             }
@@ -337,7 +335,6 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public boolean onQueryTextSubmit(String query) {
 
-                Log.d("RESULT_OK", "Entre a SearchView");
                 Intent ShowingContact = new Intent(HomeActivity.this, ShowingContacts.class);
                 ShowingContact.putExtra(QUERY_FIREBASE, query);
                 startActivity(ShowingContact);

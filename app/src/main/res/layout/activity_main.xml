@@ -28,6 +28,7 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:fontFamily="@font/capriola"
+        android:layout_marginStart="8dp"
         android:text="See What's happening in the world righ now."
         android:textColor="@android:color/black"
         android:textSize="22sp"

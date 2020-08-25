@@ -41,7 +41,7 @@ public class TweetAdapter extends RecyclerView.Adapter <TweetAdapter.TweetViewHo
     @Override
     public TweetViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
 
-        View v = LayoutInflater.from(context).inflate(R.layout.tweet_view, viewGroup, false);
+        View v = LayoutInflater.from(context).inflate(R.layout.tweet_viewspecial, viewGroup, false);
         return new TweetViewHolder(v);
     }
 
@@ -74,8 +74,23 @@ public class TweetAdapter extends RecyclerView.Adapter <TweetAdapter.TweetViewHo
 
         userInfo(tweetCurrent.getUser(), tweetViewHolder.imageUser, tweetViewHolder.textName, tweetViewHolder.textViewId);
         isLike(tweetCurrent.getId(), tweetViewHolder.likeTweetbtn);
-        countingLikes(pidTweet, tweetViewHolder.likeTweet);
-        countingComments(pidTweet, tweetViewHolder.commentTweet);
+        isRetweet(tweetCurrent.getId(), tweetViewHolder.reetTweetbtn);
+        countingLikes(tweetCurrent.getId(), tweetViewHolder.likeTweet);
+        countingComments(tweetCurrent.getId(), tweetViewHolder.commentTweet);
+        countingReplies(tweetCurrent.getId(), tweetViewHolder.reetTweet);
+
+        tweetViewHolder.reetTweetbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (tweetViewHolder.reetTweetbtn.getTag() == "Retweet"){
+                    FirebaseDatabase.getInstance().getReference().child("Retweet").child(tweetCurrent.getId()).child(firebaseUser.getUid().toString()).setValue(true);
+                }else{
+                    FirebaseDatabase.getInstance().getReference().child("Retweet").child(tweetCurrent.getId()).child(firebaseUser.getUid().toString()).removeValue();
+                }
+            }
+        });
+
 
         tweetViewHolder.likeTweetbtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -158,11 +173,36 @@ public class TweetAdapter extends RecyclerView.Adapter <TweetAdapter.TweetViewHo
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                 if (snapshot.child(firebaseUser.getUid()).exists()){
-                    likeTweetbtn.setImageResource(R.drawable.ic_favorite_likeliked_24dp);
+                    likeTweetbtn.setImageResource(R.drawable.liked64x64);
                     likeTweetbtn.setTag("Liked");
                 } else {
-                    likeTweetbtn.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+                    likeTweetbtn.setImageResource(R.drawable.like_color64x64);
                     likeTweetbtn.setTag("Likes");
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
+
+   private void isRetweet(String idTweet, final ImageView reetTweetbtn) {
+
+        DatabaseReference retweetRef = FirebaseDatabase.getInstance().getReference().child("Retweet").child(idTweet);
+       retweetRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                if (snapshot.child(firebaseUser.getUid()).exists()){
+                    reetTweetbtn.setImageResource(R.drawable.retweeted64x64);
+                    reetTweetbtn.setTag("Retweeted");
+                } else {
+                    reetTweetbtn.setImageResource(R.drawable.retweet64x64);
+                    reetTweetbtn.setTag("Retweet");
 
                 }
             }
@@ -177,13 +217,14 @@ public class TweetAdapter extends RecyclerView.Adapter <TweetAdapter.TweetViewHo
 
     private void countingLikes(final String id, final TextView txtbtn) {
 
-        MyDB = FirebaseDatabase.getInstance().getReference().child("Likes").child(id);
-        MyDB.addValueEventListener(new ValueEventListener() {
+        DatabaseReference contLikes = FirebaseDatabase.getInstance().getReference().child("Likes").child(id);
+        contLikes.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 if (dataSnapshot.exists()){
-                    txtbtn.setText((int) dataSnapshot.getChildrenCount());
+                    String aux = ""+ dataSnapshot.getChildrenCount();
+                    txtbtn.setText(aux);
                 }
             }
 
@@ -201,7 +242,27 @@ public class TweetAdapter extends RecyclerView.Adapter <TweetAdapter.TweetViewHo
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 if (dataSnapshot.exists()){
-                    txtbtn.setText((int) dataSnapshot.getChildrenCount());
+                    String aux = ""+ dataSnapshot.getChildrenCount();
+                    txtbtn.setText(aux);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+    }
+
+    private void countingReplies(final String id, final TextView txtbtn) {
+
+        DatabaseReference contReplies = FirebaseDatabase.getInstance().getReference().child("Retweet").child(id);
+        contReplies.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.exists()){
+                    String aux = ""+ dataSnapshot.getChildrenCount();
+                    txtbtn.setText(aux);
                 }
             }
 
@@ -225,6 +286,7 @@ public class TweetAdapter extends RecyclerView.Adapter <TweetAdapter.TweetViewHo
         public TextView likeTweet;
         public TextView commentTweet;
         public TextView reetTweet;
+        public ImageView reetTweetbtn;
         public ImageView likeTweetbtn;
         public ImageView commentTweetbtn;
         public CardView contentTweet;
@@ -239,10 +301,12 @@ public class TweetAdapter extends RecyclerView.Adapter <TweetAdapter.TweetViewHo
             tweetImage = itemView.findViewById(R.id.image_tweet_from);
             likeTweet = itemView.findViewById(R.id.count_like);
             commentTweet = itemView.findViewById(R.id.count_comment);
-
+            reetTweet = itemView.findViewById(R.id.count_reetweet);
             likeTweetbtn = itemView.findViewById(R.id.like_tweet);
             commentTweetbtn = itemView.findViewById(R.id.comment_tweet);
             contentTweet = itemView.findViewById(R.id.contact_card_view);
+            reetTweetbtn = itemView.findViewById(R.id.reetweet_tweet);
+
         }
 
     }

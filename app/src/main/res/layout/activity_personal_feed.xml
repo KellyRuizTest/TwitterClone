@@ -25,8 +25,8 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_img_profile"
-        android:layout_width="85dp"
-        android:layout_height="90dp"
+        android:layout_width="80dp"
+        android:layout_height="85dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:src="@drawable/usermale"
@@ -103,7 +103,7 @@
             android:layout_marginLeft="2dp"
             android:onClick="onProfileFollowing"
             android:text="Following"
-            android:textColor="@android:color/darker_gray"
+            android:textColor="@android:color/secondary_text_light"
             android:textSize="14sp" />
 
 
@@ -126,7 +126,7 @@
             android:layout_marginLeft="2dp"
             android:onClick="onProfileFollowers"
             android:text="Follower"
-            android:textColor="@android:color/darker_gray"
+            android:textColor="@android:color/secondary_text_light"
             android:textSize="14sp" />
     </LinearLayout>
 
@@ -139,6 +139,7 @@
         android:textSize="12sp"
         app:cornerRadius="40dp"
         android:fontFamily="@font/capriola"
+        android:textStyle="bold"
         android:textAllCaps="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -150,19 +151,36 @@
 
     </com.google.android.material.button.MaterialButton>
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/follwing_or_not"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:text="Following"
+        android:textAllCaps="true"
+        app:cornerRadius="30dp"
+        android:textSize="12sp"
+        android:textColor="@color/colorAccent"
+        android:fontFamily="@font/capriola"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.968"
+        app:layout_constraintStart_toEndOf="@+id/profile_img_profile"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.193" />
+
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorAccent"
+        app:tabTextColor="@android:color/tab_indicator_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         app:layout_constraintVertical_bias="0.02"
-
         app:tabIndicatorColor="@color/colorPrimary"
-        app:tabMode="fixed"
         app:tabSelectedTextColor="@color/colorPrimary"
-        app:tabTextColor="@android:color/tab_indicator_text"
+        app:tabIndicatorAnimationDuration="@android:integer/config_shortAnimTime"
+        app:tabMode="fixed"
         tools:layout_editor_absoluteX="0dp">
 
         <com.google.android.material.tabs.TabItem
@@ -170,6 +188,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Tweets"
+            android:background="@color/colorAccent"
             android:textAllCaps="false" />
 
         <com.google.android.material.tabs.TabItem
@@ -177,6 +196,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Replies"
+            android:background="@color/colorAccent"
             android:textAllCaps="false" />
 
         <com.google.android.material.tabs.TabItem
@@ -195,34 +215,17 @@
 
     </com.google.android.material.tabs.TabLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_profile_feed"
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/view_pager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="2dp"
+        android:layout_height="373dp"
+        android:layout_marginTop="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tabLayout"
-        app:layout_constraintVertical_bias="0.0"
-        tools:layout_editor_absoluteX="0dp">
-
-    </androidx.recyclerview.widget.RecyclerView>
-
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/follwing_or_not"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:text="Following"
-        android:textAllCaps="true"
-        app:cornerRadius="30dp"
-        android:textSize="12sp"
-        android:textColor="@color/colorAccent"
-        android:fontFamily="@font/capriola"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.968"
-        app:layout_constraintStart_toEndOf="@+id/profile_img_profile"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.193" />
+        app:layout_constraintVertical_bias="0"
+        tools:layout_editor_absoluteX="0dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
