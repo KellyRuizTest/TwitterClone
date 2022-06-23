@@ -3,7 +3,7 @@
 **Twitter Clone** is an app which we can Tweet, Share, Like, Retweet and comment others. just a twitter clone LITE. Express yourself
 
 ## 📸 Screenshot
-![](media/baner.png)
+![](media/banner.png)
 
 ## 🗡️ App Features
 
