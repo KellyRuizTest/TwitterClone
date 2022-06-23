@@ -10,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.krruiz.twitterclonelite.Model.Users;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -49,7 +51,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserInViewHold
     @Override
     public void onBindViewHolder(@NonNull final UserInViewHolder holder, int position) {
 
-        Users userCurrent = uploads.get(position);
+        final Users userCurrent = uploads.get(position);
         holder.userName.setText(userCurrent.getName());
         holder.userId.setText(userCurrent.getIdUser());
         holder.userBio.setText(userCurrent.getBio());
@@ -58,65 +60,106 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserInViewHold
         final String idUser = userCurrent.getId();
 
         isFollowing(userCurrent.getId(), holder.buttonFollow);
-        unFollow(holder.buttonFollow, userCurrent);
-
-        holder.cardViewUser.setOnClickListener(new View.OnClickListener() {
+        holder.buttonFollow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intentToProfile = new Intent(context, PersonalFeedActivity.class);
-                intentToProfile.putExtra("idUser", idUser);
-                intentToProfile.setType("text/plain");
-                context.startActivity(intentToProfile);
+                if (holder.buttonFollow.getText().toString().trim().equals("Follow")) {
+                    System.out.println("=======================================");
+                    System.out.println("USER:");
+                    System.out.println(idUser);
+                    System.out.println("=======================================");
+                    FirebaseDatabase.getInstance().getReference().child("Follow").child(firebaseUser.getCurrentUser().getUid().toString()).child("Following")
+                            .child(userCurrent.getId()).setValue(true).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()){
+                                        System.out.println("=======================================");
+                                        System.out.println(idUser);
+                                        System.out.println("=======================================");
+                                        FirebaseDatabase.getInstance().getReference().child("Follow").child(idUser).child("Followers")
+                                                .child(firebaseUser.getUid().toString()).setValue(true);
+                                    }
+                                }
+                            });
+
+                } else {
+
+                    FirebaseDatabase.getInstance().getReference().child("Follow").child(firebaseUser.getCurrentUser().getUid()).child("Following")
+                            .child(userCurrent.getId()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()){
+
+                                        FirebaseDatabase.getInstance().getReference().child("Follow").child(userCurrent.getId()).child("Followers")
+                                                .child(firebaseUser.getCurrentUser().getUid()).removeValue();
+                                    }
+                                }
+                            });
+                }
             }
         });
-
     }
 
-    private void unFollow(final Button auxiliar, final Users userin){
+    /*private void unFollow(final Button auxiliar, final Users userin){
 
     auxiliar.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
 
-            if (auxiliar.getText().toString().equals("follow")) {
+            if (auxiliar.getText().toString().trim().equals("Follow")) {
 
-                FirebaseDatabase.getInstance().getReference().child("Follow").child(firebaseUser.getCurrentUser().getUid().toString()).child("following")
+                FirebaseDatabase.getInstance().getReference().child("Follow").child(firebaseUser.getCurrentUser().getUid().toString()).child("Following")
                         .child(userin.getId()).setValue(userin);
 
-                FirebaseDatabase.getInstance().getReference().child("Follow").child(userin.getId()).child("followers")
+                System.out.println("===============================================");
+                System.out.println("In Follow");
+                System.out.println(auxiliar.getText().toString());
+                System.out.println(userin.getName()+ "-"+userin.getId());
+                System.out.println("===============================================");
+
+                FirebaseDatabase.getInstance().getReference().child("Follow").child(userin.getId()).child("Followers")
                         .child(firebaseUser.getUid().toString()).setValue(userin);
 
-            }else {
+            }
+            if (auxiliar.getText().toString().trim().equals("Following")) {
 
-                FirebaseDatabase.getInstance().getReference().child("Follow").child(firebaseUser.getCurrentUser().getUid()).child("following")
+                FirebaseDatabase.getInstance().getReference().child("Follow").child(firebaseUser.getCurrentUser().getUid()).child("Following")
                         .child(userin.getId()).removeValue();
 
-                FirebaseDatabase.getInstance().getReference().child("Follow").child(userin.getId()).child("followers")
+                System.out.println("===============================================");
+                System.out.println("In Following");
+                System.out.println(auxiliar.getText().toString());
+                System.out.println(userin.getName()+ "-"+userin.getId());
+                System.out.println("===============================================");
+
+                FirebaseDatabase.getInstance().getReference().child("Follow").child(userin.getId()).child("Followers")
                         .child(firebaseUser.getCurrentUser().getUid()).removeValue();
 
             }
         }
 
     });
-
-
-    }
+    }*/
 
     private void isFollowing(final String id, final Button btn) {
 
         DatabaseReference MyDB = FirebaseDatabase.getInstance().getReference()
-                .child("Follow").child(firebaseUser.getCurrentUser().getUid()).child("following");
+                .child("Follow").child(firebaseUser.getCurrentUser().getUid()).child("Following");
 
         MyDB.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                     if (dataSnapshot.child(id).exists()) {
-                        btn.setText("following");
-                        btn.setBackgroundResource(R.drawable.borde_round_follow);
+                        btn.setText("Following");
+                        btn.setTextColor(context.getResources().getColor(R.color.colorTwitter));
+                        btn.setBackgroundColor(context.getResources().getColor(R.color.colorWhite));
+                    //    btn.setTextColor(getC getResources().getColor(R.color.colorTwitter));
+                    //    btn.setBackgroundColor(getResources().getColor(R.color.colorWhite));
+
                     } else {
-                        btn.setText("follow");
-                        btn.setBackgroundResource(R.drawable.borde_round_unfollow);
+                        btn.setText("Follow");
+
                     }
 
             }
@@ -150,7 +193,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserInViewHold
             buttonFollow = (Button) itemView.findViewById(R.id.button_follow);
             cardViewUser = (CardView) itemView.findViewById(R.id.cardview_show_contact);
 
-
         }
     }
+
 }

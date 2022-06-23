@@ -25,12 +25,13 @@ public class Users {
         email = "NoEmail setted";
         name = "NoName";
         id = "Bitcoin Revolution";
+        idUser = "@twitter";
         password = "NoPW";
         image = "#noURLimage";
         banner = "#noURLbanner";
-        bio = "#noBio";
+        bio = "Twitter user";
         location ="NoLocation";
-        sitioweb = "www.google.com";
+        sitioweb = "www.twitter.com";
     }
 
     public Users (String email, String name, String id, String password, String imageurl, String bannerurl){

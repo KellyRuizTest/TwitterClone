@@ -83,6 +83,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         Userid = (TextView) findViewById(R.id.iduser);
         UserName = (EditText) findViewById(R.id.name);
+        UserName.setFocusable(false);
         UserBio = (EditText) findViewById(R.id.biografia);
         UserLocation = (EditText) findViewById(R.id.ubicacion);
         UserSite = (EditText) findViewById(R.id.sitio);
@@ -90,6 +91,8 @@ public class ProfileActivity extends AppCompatActivity {
         UserProfile = (ImageView) findViewById(R.id.profile_img);
         UserBanner = (ImageView) findViewById(R.id.image_banner);
         UpdateProfile = (Button) findViewById(R.id.updateprofile);
+
+
 
         fillUserData();
 
@@ -100,7 +103,6 @@ public class ProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 kindPhoto = 0;
-                Toast.makeText(ProfileActivity.this, "I clicked Image", Toast.LENGTH_SHORT).show();
 
                 if (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
                     requestPermissions(new String [] {Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
@@ -151,12 +153,6 @@ public class ProfileActivity extends AppCompatActivity {
                 sitio = dataSnapshot.getValue(Users.class).getSitioweb();
                 banner = dataSnapshot.getValue(Users.class).getBanner();
                 image = dataSnapshot.getValue(Users.class).getImage();
-
-                System.out.println("=====Printing our Data got from Database in varialbles=====");
-                System.out.println("ID"+idUser);
-                System.out.println("NAME"+name);
-                System.out.println("EMAIL"+email);
-                System.out.println("============================================================");
 
                 Userid.setText(idUser);
                 UserName.setText(name);
@@ -269,9 +265,6 @@ public class ProfileActivity extends AppCompatActivity {
 
                         if (task.isSuccessful()){
                             downloadImageURL = task.getResult().toString();
-                            System.out.println("========================================================");
-                            System.out.println(downloadImageURL);
-                            System.out.println("========================================================");
 
                             Toast.makeText(getApplicationContext(), "Profile Image URL sucessfully ", Toast.LENGTH_LONG);
                             saveProductInfoDatabase();
@@ -284,7 +277,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void saveProductInfoDatabase() {
 
-        String id = idUser;
+        String id = firebaseUser.getUid().toString();
 
         HashMap<String, Object> photoMap = new HashMap<>();
         photoMap.put("name", UserName.getText().toString().trim());
@@ -311,6 +304,7 @@ public class ProfileActivity extends AppCompatActivity {
                     loadingBar.dismiss();
 
                     Intent intent = new Intent(ProfileActivity.this, HomeActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
 
                 }else {

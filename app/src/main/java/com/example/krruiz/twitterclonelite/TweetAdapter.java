@@ -198,7 +198,7 @@ public class TweetAdapter extends RecyclerView.Adapter <TweetAdapter.TweetViewHo
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                 if (snapshot.child(firebaseUser.getUid()).exists()){
-                    reetTweetbtn.setImageResource(R.drawable.retweeted64x64);
+                    reetTweetbtn.setImageResource(R.drawable.retweet64x64);
                     reetTweetbtn.setTag("Retweeted");
                 } else {
                     reetTweetbtn.setImageResource(R.drawable.retweet64x64);

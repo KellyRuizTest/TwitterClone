@@ -9,6 +9,7 @@
         <item name="colorSecondary">#64b5f6</item>
         <item name="colorControlActivated">#00b0ff</item>
         <item name="android:textColorHighlight">#9be0f5</item>
+        <item name="android:editTextColor">@color/colorTwitter</item>
 
     </style>
 
@@ -20,5 +21,12 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="PositiveButtonStyle" parent="@style/Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="backgroundTint">@color/colorTwitter</item>
+        <item name="cornerRadius">30dp</item>
+
+    </style>
 
 </resources>

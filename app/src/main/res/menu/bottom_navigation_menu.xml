@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/home_menu"
+        android:icon="@drawable/ic_menu_home"
+        android:title="Home"
+        app:showAsAction="ifRoom"
+        />
+
+    <item
+        android:id="@+id/search_menu"
+        android:icon="@drawable/ic_menu_search"
+        android:title="Search"
+        app:showAsAction="ifRoom"
+        />
+
+    <item
+        android:id="@+id/notification_menu"
+        android:icon="@drawable/ic_menu_notification"
+        android:title="Notification"
+        app:showAsAction="ifRoom"
+        />
+
+    <item
+        android:id="@+id/email_menu"
+        android:icon="@drawable/ic_baseline_mail_outline_24"
+
+        android:title="Direct"
+        app:showAsAction="ifRoom"
+        />
+
+
+</menu>

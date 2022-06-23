@@ -4,12 +4,14 @@
     tools:context="com.example.krruiz.twitterclonelite.ScrollingActivity">
 
     <item
+        android:tooltipText="Search here"
+        android:title="Buscar"
         android:id="@+id/action_search"
         android:icon="@android:drawable/ic_menu_search"
-        android:title="Buscar"
-        app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="ifRoom"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
         />
+
 
 
 

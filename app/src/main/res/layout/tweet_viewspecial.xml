@@ -97,10 +97,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="4dp"
-                        android:text="Cualquier Cosa 1"
+                        android:hint="Cualquier Cosa 1"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                         android:textColor="@color/common_google_signin_btn_text_dark_focused"
-                        android:textSize="12sp"
+                        android:textSize="13sp"
                         tools:layout_editor_absoluteX="28dp"
                         tools:layout_editor_absoluteY="101dp" />
 
@@ -203,7 +203,6 @@
                             android:layout_marginStart="2dp"
                             android:layout_marginTop="6dp"
                             android:textSize="12sp"
-                            android:hint="90"
                             android:textColorHint="@android:color/black"
                             android:textColor="@android:color/black"
                             app:layout_constraintStart_toEndOf="@+id/like_tweet"

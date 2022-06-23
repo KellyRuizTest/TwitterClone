@@ -98,6 +98,7 @@ public class CommentActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()){
+                    commentsUploads.clear();
                     for (DataSnapshot eachone : snapshot.getChildren()){
                         Comments getInfromFirebaseIterator = eachone.getValue(Comments.class);
 

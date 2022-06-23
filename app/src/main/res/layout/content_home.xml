@@ -10,12 +10,28 @@
     android:background="@color/colorAccent"
     tools:showIn="@layout/app_bar_home">
 
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:layout_gravity="bottom"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorAccent"
+        android:backgroundTint="@color/colorPrimary"
+        app:itemRippleColor="@color/colorPrimary"
+        app:itemIconTint="@color/colorTwitter"
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:menu="@menu/bottom_navigation_menu"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_to_show_feeds"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginBottom="58dp"
+        >
 
     </androidx.recyclerview.widget.RecyclerView>
+
+
 
 
 </RelativeLayout>

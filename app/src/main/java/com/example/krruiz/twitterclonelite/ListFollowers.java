@@ -62,7 +62,7 @@ public class ListFollowers extends AppCompatActivity {
 
     private void searchingFollowersById() {
 
-        MyDBFollowers = FirebaseDatabase.getInstance().getReference().child("Follow").child(idUser).child("followers");
+        MyDBFollowers = FirebaseDatabase.getInstance().getReference().child("Follow").child(idUser).child("Followers");
 
 
         MyDBFollowers.addValueEventListener(new ValueEventListener() {

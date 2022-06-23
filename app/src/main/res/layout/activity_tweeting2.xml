@@ -113,15 +113,16 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_tweetclick"
-            android:layout_width="103dp"
-            android:layout_height="45dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="23dp"
             android:layout_marginEnd="16dp"
             android:fontFamily="@font/capriola"
             android:text="Tweet"
+            android:minHeight="30dp"
             android:textAllCaps="false"
             android:textColor="@color/colorAccent"
-            android:textSize="16sp"
+            android:textSize="13sp"
             app:cornerRadius="30dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

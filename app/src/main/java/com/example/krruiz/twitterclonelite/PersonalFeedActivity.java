@@ -161,7 +161,7 @@ public class PersonalFeedActivity extends AppCompatActivity {
 
     private void gettingFollowOrFollowing() {
 
-        DatabaseReference userFollowRef = FirebaseDatabase.getInstance().getReference().child("Follow").child(firebaseUser.getUid()).child("following");
+        DatabaseReference userFollowRef = FirebaseDatabase.getInstance().getReference().child("Follow").child(firebaseUser.getUid()).child("Following");
         userFollowRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -181,7 +181,7 @@ public class PersonalFeedActivity extends AppCompatActivity {
 
     private void getQtyFollowers() {
 
-        DatabaseReference followingN = FirebaseDatabase.getInstance().getReference().child("Follow").child(idUser).child("followers");
+        DatabaseReference followingN = FirebaseDatabase.getInstance().getReference().child("Follow").child(idUser).child("Followers");
 
         followingN.addValueEventListener(new ValueEventListener() {
             @Override
@@ -202,7 +202,7 @@ public class PersonalFeedActivity extends AppCompatActivity {
     }
 
     private void getQtyFollowings() {
-        DatabaseReference followingN = FirebaseDatabase.getInstance().getReference().child("Follow").child(idUser).child("following");
+        DatabaseReference followingN = FirebaseDatabase.getInstance().getReference().child("Follow").child(idUser).child("Following");
 
         followingN.addValueEventListener(new ValueEventListener() {
             @Override

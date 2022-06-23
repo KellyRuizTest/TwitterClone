@@ -132,7 +132,7 @@ public class RegistrationActivity extends AppCompatActivity {
                                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 
-                                FirebaseDatabase.getInstance().getReference().child("Follow").child(userId).child("following")
+                                FirebaseDatabase.getInstance().getReference().child("Follow").child(userId).child("Following")
                                         .child(userId).setValue(aux);
 
                                 startActivity(intent);

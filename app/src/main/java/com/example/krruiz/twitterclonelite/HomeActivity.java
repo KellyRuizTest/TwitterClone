@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.text.Layout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.example.krruiz.twitterclonelite.Model.Tweet;
 import com.example.krruiz.twitterclonelite.Model.Users;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -86,6 +88,8 @@ public class HomeActivity extends AppCompatActivity
         Log.d(TAG, "onCreate()");
 
         layoutProfile = (LinearLayout) findViewById(R.id.layout_profile);
+       // ImageView image_home = findViewById(R.id.show_image_home);
+        //ImageView stars_home = findViewById(R.id.stars);
 
        // FollowList();
 
@@ -140,6 +144,7 @@ public class HomeActivity extends AppCompatActivity
 
         checkFollowing();
 
+
     }
 
     private void userInfo() {
@@ -152,6 +157,9 @@ public class HomeActivity extends AppCompatActivity
                     textNameUser.setText(aux.getName());
                     textIdUser.setText(aux.getIdUser());
                     Picasso.get().load(aux.getImage()).placeholder(R.drawable.usermale).into(imageViewUser);
+
+                    actualUser = snapshot.getValue(Users.class);
+
                 }
             }
 
@@ -167,7 +175,7 @@ public class HomeActivity extends AppCompatActivity
 
         tweetsFollowings = new ArrayList<>();
 
-        DatabaseReference tweetsToShow = FirebaseDatabase.getInstance().getReference().child("Follow").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("following");
+        DatabaseReference tweetsToShow = FirebaseDatabase.getInstance().getReference().child("Follow").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Following");
         tweetsToShow.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -220,7 +228,7 @@ public class HomeActivity extends AppCompatActivity
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         DatabaseReference Db = FirebaseDatabase.getInstance().getReference()
-                .child("Follow").child(firebaseUser.getUid()).child("following");
+                .child("Follow").child(firebaseUser.getUid()).child("Following");
 
         Db.addValueEventListener(new ValueEventListener() {
             @Override
@@ -233,7 +241,7 @@ public class HomeActivity extends AppCompatActivity
         });
 
         Db = FirebaseDatabase.getInstance().getReference()
-                .child("Follow").child(firebaseUser.getUid()).child("followers");
+                .child("Follow").child(firebaseUser.getUid()).child("Followers");
 
         Db.addValueEventListener(new ValueEventListener() {
             @Override
@@ -329,8 +337,8 @@ public class HomeActivity extends AppCompatActivity
         SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
 
+        searchView.setQueryHint("Search here");
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setSubmitButtonEnabled(true);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {

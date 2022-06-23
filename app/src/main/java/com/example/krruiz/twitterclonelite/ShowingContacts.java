@@ -52,11 +52,11 @@ public class ShowingContacts extends AppCompatActivity {
         recyclerViewContacts = findViewById(R.id.show_contact_recyclerview);
         recyclerViewContacts.setHasFixedSize(true);
         recyclerViewContacts.setLayoutManager(new LinearLayoutManager(this));
-
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         QUERY_TO = getIntent().getStringExtra(HomeActivity.QUERY_FIREBASE);
         Log.d("RESULT_OK", QUERY_TO);
 
-        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+       // firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
     }
 
@@ -75,7 +75,6 @@ public class ShowingContacts extends AppCompatActivity {
             @Override
             protected void onBindViewHolder(@NonNull UserViewHolder holder, int position, @NonNull Users model) {
 
-                Log.d("RESULT_OK", "Entre a onBindViewHolder de RecyclerAdapter");
                 holder.bindUser(getApplicationContext(), model);
 
                 isFollowing(model.getId(), holder.buttonFollow);
@@ -85,7 +84,6 @@ public class ShowingContacts extends AppCompatActivity {
             @Override
             public UserViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
                 //return null;
-                Log.d("RESULT_OK", "Entre a onCreateViewHolder de RecyclerAdapter");
 
                 View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.show_contacts, viewGroup, false);
                 return new UserViewHolder(view);
@@ -100,7 +98,7 @@ public class ShowingContacts extends AppCompatActivity {
     private void isFollowing(final String id, final Button btn) {
 
         MyDB = FirebaseDatabase.getInstance().getReference()
-                .child("Follow").child(firebaseUser.getUid()).child("following");
+                .child("Follow").child(firebaseUser.getUid()).child("Following");
 
         MyDB.addValueEventListener(new ValueEventListener() {
             @Override
@@ -112,12 +110,11 @@ public class ShowingContacts extends AppCompatActivity {
                 } else {
 
                     if (dataSnapshot.child(id).exists()) {
-                        btn.setText("following");
-                        btn.setBackgroundResource(R.drawable.borde_round_follow);
+                        btn.setText("Following");
+                        btn.setTextColor(getResources().getColor(R.color.colorTwitter));
+                        btn.setBackgroundColor(getResources().getColor(R.color.colorWhite));
                     } else {
-                        btn.setText("follow");
-                        btn.setBackgroundResource(R.drawable.borde_round_unfollow);
-                        btn.setTextColor(getColor(R.color.colorPrimaryDark));
+                        btn.setText("Follow");
                     }
                 }
             }
@@ -140,7 +137,6 @@ public class ShowingContacts extends AppCompatActivity {
 
         public void bindUser(Context ctx, final Users user) {
 
-            Log.d("RESULT_OK", "Entre a bindUser from UserViewHolderClass");
 
             TextView nameUser = (TextView) v.findViewById(R.id.show_contact_name);
             TextView idUser = (TextView) v.findViewById(R.id.show_contact_id);
@@ -158,20 +154,20 @@ public class ShowingContacts extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
 
-                if (buttonFollow.getText().toString().equals("follow")) {
+                if (buttonFollow.getText().toString().equals("Follow")) {
 
-                    FirebaseDatabase.getInstance().getReference().child("Follow").child(firebaseUser.getUid()).child("following")
+                    FirebaseDatabase.getInstance().getReference().child("Follow").child(firebaseUser.getUid()).child("Following")
                             .child(user.getId()).setValue(user);
 
-                    FirebaseDatabase.getInstance().getReference().child("Follow").child(user.getId()).child("followers")
+                    FirebaseDatabase.getInstance().getReference().child("Follow").child(user.getId()).child("Followers")
                          .child(firebaseUser.getUid()).setValue(HomeActivity.actualUser);
 
                 }else {
 
-                    FirebaseDatabase.getInstance().getReference().child("Follow").child(firebaseUser.getUid()).child("following")
+                    FirebaseDatabase.getInstance().getReference().child("Follow").child(firebaseUser.getUid()).child("Following")
                             .child(user.getId()).removeValue();
 
-                    FirebaseDatabase.getInstance().getReference().child("Follow").child(user.getId()).child("followers")
+                    FirebaseDatabase.getInstance().getReference().child("Follow").child(user.getId()).child("Followers")
                             .child(firebaseUser.getUid()).removeValue();
 
                     }

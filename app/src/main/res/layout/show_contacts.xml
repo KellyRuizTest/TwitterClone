@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
@@ -38,7 +37,7 @@
                 android:paddingLeft="2dp"
                 android:paddingRight="2dp"
                 app:civ_border_color="@color/colorPrimaryDark"
-                app:civ_border_width="1dp"
+                app:civ_border_width="0.7dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -48,14 +47,16 @@
                 android:id="@+id/show_contact_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="6dp"
+                android:layout_marginStart="6dp"
                 android:layout_toEndOf="@+id/show_contact_image"
                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                 android:textColor="@android:color/black"
                 android:textSize="14sp"
                 android:textStyle="bold"
+                android:layout_marginBottom="12dp"
                 app:layout_constraintLeft_toRightOf="@+id/show_contact_image"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 tools:text="John Doe" />
 
             <TextView
@@ -68,6 +69,8 @@
                 android:textSize="12sp"
                 app:layout_constraintLeft_toRightOf="@+id/show_contact_name"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="12dp"
                 tools:text="user" />
 
             <TextView
@@ -86,16 +89,19 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_follow"
                 android:layout_width="wrap_content"
-                android:layout_height="30dp"
+                android:layout_height="wrap_content"
                 android:layout_marginEnd="4dp"
                 android:fontFamily="@font/capriola"
+                style="@style/PositiveButtonStyle"
+                android:textAllCaps="false"
                 android:text="Follow"
-                android:textAllCaps="true"
                 android:textColor="@android:color/white"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                app:cornerRadius="20dp"
+                app:cornerRadius="30dp"
+                app:strokeColor="@color/colorTwitter"
+                app:strokeWidth="0.7dp"
                 app:elevation="2dp"
+                android:minHeight="30dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
