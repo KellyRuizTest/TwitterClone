@@ -1,6 +1,6 @@
 # **Twitter Clone**
 
-**Twitter Clone** is an app which we can Tweet, Share, Like, Retweet and comment others. just a twitter clone LITE. Express yourself
+**Twitter Clone** is an app which you can Tweet, Share, Like, Retweet and comment others. just a twitter clone LITE. Express yourself
 
 ## 📸 Screenshots
 ![](media/banner.png)
